@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash Flood Prediction Tool - Nepal</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto+Condensed" rel="stylesheet">
+
+    <link href="{% static 'flashfloodnp/css/newcss/Version4bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'flashfloodnp/css/newcss/glyphicons.css' %}" rel="stylesheet" />
+    <link href="{% static 'flashfloodnp/css/newcss/ol.css' %}" rel="stylesheet" />
+    <link href="{% static 'flashfloodnp/css/newcss/ol-ext.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'flashfloodnp/css/newcss/bootstrap-slider.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'flashfloodnp/css/newcss/threddsDataserverMinified.css' %}" rel="stylesheet" />
+    <link href="{% static 'flashfloodnp/css/newcss/jquery-ui.css' %}" rel="stylesheet" />
+    <link href="{% static 'flashfloodnp/css/newcss/MonthPicker.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'flashfloodnp/css/newcss/CustomStylesMonthPicker.css' %}" rel="stylesheet" />
+
+    <link href="{% static 'flashfloodnp/css/Content/Site.css' %}" rel="stylesheet" />
+    <link href="{% static 'flashfloodnp/css/Content/cssPlugin/soil.css' %}" rel="stylesheet" />
+
+    <link href="{% static 'flashfloodnp/css/main.css' %}" rel="stylesheet" />
+    <link href="{% static 'flashfloodnp/css/newcss/layerUIWithSlider.css' %}" rel="stylesheet" />
+    <link href="{% static 'flashfloodnp/css/newcss/styles.css' %}" rel="stylesheet" />
+    <link href="{% static 'flashfloodnp/css/Content/cssPlugin/lapis.css' %}" rel="stylesheet" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C9GR11YW59"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-C9GR11YW59');
+    </script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C9GR11YW59"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+        gtag('config', 'G-C9GR11YW59');
+    </script>
+
+</head>
+
+<body>
+    <div id="ajax_loading_class" style="
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #566e80db;
+    z-index: 99999;
+    display: none;
+">
+        <div style="
+    position: absolute;
+    top: 50%;
+    right: 50%;
+">
+
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
+    </div>
+    <div class="banner">
+        <h3 class="banner-heading">Flash Flood Prediction Tool - Nepal</h3>
+        <div class="logos pull-right">
+            <img src="{% static 'flashfloodnp/css/Content/icons/logo-icimod.png' %}"
+                style="height: 35px;margin-top: 16px;" />
+        </div>
+    </div>
+
+    <div class="container-fluid main-container"> <!--has-toolbar -->
+        <div class="row full-height">
+            <!--MIDDLE-->
+            <!-- Map Section -->
+            <div class="col-md-10 full-height">
+                <div id="map-section" class="row full-height">
+                    <div class="col-md-12 colpad padtop padbottom" style="padding-right:0;">
+                        <div class="panel" style="height:100%;padding:10px;">
+                            <div id="map">
+                                {% if forecast_run_date %}
+                                <div id="forecast-date-overlay"
+                                    style="position: absolute; top: 2Spx; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.85); padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; font-size: 13px; z-index: 999; pointer-events: none; box-shadow: 0 1px 5px rgba(0,0,0,0.2); font-family: 'Open Sans', 'Segoe UI', sans-serif;">
+                                    Forecast Run Date: {{ forecast_run_date }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--LAST-->
+            <div class="col-md-2 full-height">
+                <!--Legend section-->
+                <div class="row top-row full-height">
+                    <div class="col-md-12 colpad padtop col-mob-off">
+                        <div class="panel" style="height:100%">
+                            <div class="panel-heading padding-top-6">
+                                <h4 class="panel-title full-width layer-heading">
+                                    Layers
+                                </h4>
+                            </div>
+                            <div class="layer-div">
+                                <div class="layerCollection"></div>
+                                <div class="region-selection">
+                                    <b>Select District</b>
+                                    <br>
+                                    <select id="selDistrict" class="form-control form-control-sm" data-width="fit">
+                                    </select>
+                                    <br>
+                                    <b>Select river</b>
+                                    <br>
+                                    <select id="selRivers" class="form-control form-control-sm" data-width="fit">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!--Information section-->
+                </div>
+
+                <div class="row bot-row">
+                    <div class="col-md-12 colpad padtop padbottom ">
+                        <div class="panel" style="height:100%;">
+                            <div class="panel-heading padding-top-6">
+                                <h4 class="panel-title full-width layer-heading">
+                                    About Flash Flood Prediction Tool
+                                    <a href="#"><img
+                                            src="{% static 'flashfloodnp/css/Content/icons/app_icon_about.png' %}"
+                                            style="float:right;height:20px;width:auto;" data-toggle="modal"
+                                            data-target="#aboutModal"></a>
+                                </h4>
+                            </div>
+                            <div class="panel-body" style="height:calc(100% -  40px);overflow:auto;">
+                                <div style="text-align:justify;">
+                                    <b>Description:</b><br>
+                                    The Flash Flood Prediction Tool application is the collection of river network
+                                    created
+                                    within specific countries which has the unique ID which then is connected to the
+                                    database to have the 54-hours forecast. The user can interact by clicking this river
+                                    network. This application can be a part of a DSS tool for flood forecasting and give
+                                    an
+                                    early warning system to the user.
+                                </div>
+                                <div class="form-group" style="margin-top:5px;">
+                                    <a href="#" data-toggle="modal" data-target="#aboutModal"><span
+                                            style="font-weight:bold;">View More...</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="aboutModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Flash Flood Prediction Tool - Nepal</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="contributor">
+                            <img src="{% static 'flashfloodnp/css/Content/images/USAIDlogo.png' %}">
+                            <img src="{% static 'flashfloodnp/css/Content/images/NASA_LOGO.png' %}"
+                                style="height:50px;">
+                            <img src="{% static 'flashfloodnp/css/Content/images/icimod.png' %}"
+                                style="height:40px;margin-top:10px;">
+                            <img src="{% static 'flashfloodnp/css/Content/images/Servir_HKH green.png' %}"
+                                style="height:30px;">
+                        </div>
+                        <div class="other-detail">
+                            <div style="overflow:auto;height:100%;">
+                                <h5><b class="info">Description</b></h5>
+                                <p class="info">
+                                    The Flash Flood Prediction Tool for Nepal provides 54-hour flash flood forecasts for
+                                    12,428 river segments in Nepal. The tool provides predicted estimates for flash
+                                    floods
+                                    from localised extreme weather phenomena like convective storms and thunderstorms.
+                                    It
+                                    uses the precipitation forecasts from the High-Impact Weather Assessment Toolkit (<a
+                                        href="https://servir.icimod.org/science-applications/high-impact-weather-assessment-toolkit/">HIWAT</a>)
+                                    as inputs into the Routing Application for Parallel computatIon of Discharge (<a
+                                        href="http://rapid-hub.org/">RAPID</a>)
+                                    hydrological model to estimate streamflow in the river network. This tool
+                                    complements
+                                    information generated by the <a
+                                        href="https://servir.icimod.org/science-applications/streamflow-prediction-tool-nepal/">Streamflow
+                                        Prediction Tool for Nepal</a> and can be used as
+                                    part of a decision support system for flood forecasting services. It can assist
+                                    decision
+                                    makers and managers in providing flood early warnings and response decisions during
+                                    extreme events in small river catchments.
+                                </p>
+                                <p>
+                                    Each river segment displayed in the map interface is colour-coded daily to indicate
+                                    streamflow in the segment with respect to flood return periods.
+                                </p>
+                                <ul>
+                                    <li>Blue indicates river flow <= 2-year return period</li>
+                                    <li>Yellow indicates river flow > 2-year return period</li>
+                                    <li>Orange indicates river flow > 10-year return period</li>
+                                    <li>Red indicates river flow > 20-year return period</li>
+                                </ul>
+                                <p>Users can click on a particular river segment to display forecast information. Rivers
+                                    with streamflow exceeding the threshold level for higher return periods are likely
+                                    to
+                                    experience flooding.</p>
+
+                                <h5><b class="info">Methodology</b></h5>
+                                <p class="info">
+                                    The Flash Flood Prediction Tool for Nepal provides predicted estimates by routing
+                                    HIWAT
+                                    runoff predictions through the RAPID model. HIWAT combines innovative numerical
+                                    weather
+                                    prediction, satellite-based precipitation, and land imagery techniques to assess the
+                                    potential threats and impacts of high-impact convective weather events. Different
+                                    proprietary and open-source GIS tools are used to generate the connections between
+                                    predicted and hindcasted runoff.
+                                </p>
+                                <p class="info">
+                                    The SERVIR Hindu Kush Himalaya (SERVIR-HKH) Initiative at ICIMOD worked together
+                                    with
+                                    Brigham Young University and NASA’s Marshall Space Flight Center to develop the
+                                    customised Flash Flood Prediction Tool (earlier referred to as the HIWAT Streamflow
+                                    Prediction Tool) for Nepal. It is built on Tethys, an open-source platform for water
+                                    resources web app development. The Department of Hydrology and Meteorology (DHM),
+                                    Government of Nepal, provided data on station locations with names. Observational
+                                    data
+                                    from selected stations are being used for forecast verification.
+                                </p>
+                                <p>
+                                    HIWAT runs on the SERVIR Operational Cluster Resource for Applications – Terabytes
+                                    for
+                                    Earth Science (SOCRATES) platform during the pre-monsoon and monsoon season from
+                                    March
+                                    to September every year.
+                                </p>
+                                <h5><b class="info">Analytical tools</b></h5>
+                                <p>The web application displays the following layers, which can be toggled on and off:
+                                </p>
+                                <ul>
+                                    <li>Outline</li>
+                                    <li>District-level administrative layer of Nepal</li>
+                                    <li>River network and river names</li>
+                                    <li>DHM station locations with names</li>
+                                </ul>
+                                <p class="info">
+                                    Users can view the following parameters upon clicking on any river stretch:
+                                </p>
+                                <img src="/static/flashfloodnp/images/Chart_UI.png" alt="">
+                                <br>
+                                <p>
+                                    Forecast (54-hour): Forecast information is generated from nine ensemble forecasts
+                                    and
+                                    shows the forecasted streamflow for a given period. The different background colours
+                                    in
+                                    the graph represent the flow magnitude between defined return periods.
+                                </p>
+                                <p>
+                                    Users can further interact with adjoining tabs to access the following:
+                                </p>
+                                <p>
+                                    Historical: This tab displays a graph of simulated historical flow from 1980 onwards
+                                    based on
+                                    <a href="https://www.ecmwf.int/en/forecasts/datasets/reanalysis-datasets/era5">ERA5
+                                    </a> data.
+                                </p>
+                                <p>
+                                    Download: This tab allows users to download the forecast and historical data a
+                                    downloadable CSV file.
+                                </p>
+
+                                For more information, please visit <a
+                                    href="https://servir.icimod.org/science-applications/flash-flood-prediction-tool-nepal/">https://servir.icimod.org/science-applications/flash-flood-prediction-tool-nepal/</a>
+                                <br>
+                                <br>
+                                <p><strong>Feedback</strong> <br>
+                                    We value your feedback. Please write to <a
+                                        href="mailto:servirhkh@icimod.org">servirhkh@icimod.org</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Chart Modal -->
+
+        <div class="modal fade" id="graph" tabindex="-1" role="dialog" aria-labelledby="about-modal-label"
+            aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        {# <h5 class="modal-title" id="about-modal-label">Modal title</h5>#}
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <nav>
+                            <div class="nav nav-tabs" id="graphTab" role="tablist">
+                                <a class="nav-item nav-link active" id="forecast_tab_link" data-toggle="tab"
+                                    href="#nav-home" role="tab" aria-controls="nav-home"
+                                    aria-selected="true">Forecast</a>
+                                <a class="nav-item nav-link" id="historical_tab_link" data-toggle="tab"
+                                    href="#nav-profile" role="tab" aria-controls="nav-profile"
+                                    aria-selected="false">Historical</a>
+                                <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact"
+                                    role="tab" aria-controls="nav-contact" aria-selected="false">Download</a>
+                            </div>
+                        </nav>
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
+                                aria-labelledby="forecast_tab_link">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="">
+                                            <form>
+                                                <div class="form-group row">
+                                                    <label for="staticEmail" class="col-sm-5 col-form-label" style="
+    text-align: end;
+">Select Date</label>
+                                                    <div class="col-sm-3">
+                                                        <select id="selForcastDate"
+                                                            class="form-control form-control-sm">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="flex-container-row"><img id="view-file-loading"
+                                                class="view-file hidden"
+                                                src="{% static base_name|add:'/images/loader.gif' %}" />
+                                        </div>
+                                        <div id="long-term-chart">
+
+                                        </div>
+                                        <table id="mytable">
+                                            <tbody id="tbody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="tab-pane fade" id="nav-profile" role="tabpanel"
+                                aria-labelledby="historical_tab_link">
+
+                                <div class="panel panel-default">
+                                    <div class="flex-container-row"><img id="his-view-file-loading"
+                                            class="view-file hidden"
+                                            src="{% static base_name|add:'/images/loader.gif' %}" />
+                                    </div>
+                                    <div class="panel-body">
+                                        <div id="historical-chart"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="tab-pane fade" id="nav-contact" role="tabpanel"
+                                aria-labelledby="nav-contact-tab">
+
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <h6>Download Forecast Data (Time Zone: UTC)</h6>
+                                        <div id="download_forecast" class="btn-group long-term-select" role="group">
+                                            <a class="btn btn-success" role="button" id="submit-download-forecast">
+                                                <span class="glyphicon glyphicon-play"></span> Download Forecast
+                                            </a>
+                                        </div>
+                                        <h6>Download ERA Interim Data (Time Zone: UTC)</h6>
+                                        <div id="download_interim" class="btn-group" role="group">
+                                            <a class="btn btn-info" role="button" id="submit-download-interim-csv">
+                                                <span class="glyphicon glyphicon-play"></span> Download Interim Data
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="info" class="hidden"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'flashfloodnp/js/ForBootstrapjquery-3.5.1.slim.min.js' %}"></script>
+    <script src="{% static 'flashfloodnp/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'flashfloodnp/js/ForBootstrapPopper.min.js' %}"></script>
+    <script src="{% static 'flashfloodnp/js/Version4bootstrap.min.js' %}"></script>
+    <script src="{% static 'flashfloodnp/js/bootstrap-slider.min.js' %}"></script>
+    <script src="{% static 'flashfloodnp/js/ol.js' %}"></script>
+    <script src="{% static 'flashfloodnp/js/ol-ext.min.js' %}"></script>
+    <script src="{% static 'flashfloodnp/js/iso8601.js' %}"></script>
+    <script src="{% static 'flashfloodnp/js/timeDimensionThreddsDataServer.js' %}"></script>
+    <script src="{% static 'flashfloodnp/js/plotly-latest.min.js' %}"></script>
+
+    <script src="{% static 'flashfloodnp/js/data.js' %}"></script>
+    <script src="{% static 'flashfloodnp/js/main.js' %}"></script>
+
+</body>
+
+</html>
