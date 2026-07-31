@@ -47,17 +47,4 @@ Open your web browser and navigate to:
 ```text
    http://localhost:8000
    ```
-Log in using your admin credentials and launch Flash Flood Nepal from the Tethys portal dashboard.
----
-⚙️ Configuration (Optional)
-If this application requires external services (e.g., GeoServer, PostGIS, or hydro-meteorological APIs):
-Log into the Tethys Portal as an administrator (`http://localhost:8000/admin/`).
-Go to Tethys Apps > Installed Apps > Flash Flood Nepal.
-Configure the Spatial Dataset Services and Persistent Store Services settings as required by your deployment.
----
-📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
----
-🤝 Acknowledgments & Credits
-Built using Tethys Platform
-Data sources: Hydro-meteorological datasets for Nepal
+
